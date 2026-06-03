@@ -1,0 +1,122 @@
+<%
+  currentPage = 'products';
+%>
+<%- include('../partials/header') %>
+
+<% if (success && success.length > 0) { %>
+  <div class="alert alert-success alert-dismissible fade show"><%= success %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+<% } %>
+<% if (error && error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show"><%= error %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+<% } %>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h5 class="fw-bold mb-0">Manajemen Produk</h5>
+    <small class="text-muted">Total <%= pagination.totalItems %> produk</small>
+  </div>
+  <a href="/products/create" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-circle me-1"></i>Tambah Produk
+  </a>
+</div>
+
+<!-- Search -->
+<div class="card mb-3">
+  <div class="card-body py-2">
+    <form action="/products" method="GET" class="d-flex gap-2">
+      <input type="text" name="search" value="<%= search %>" class="form-control form-control-sm" placeholder="Cari nama atau kategori...">
+      <button type="submit" class="btn btn-sm btn-primary px-3"><i class="bi bi-search"></i></button>
+      <% if (search) { %>
+        <a href="/products" class="btn btn-sm btn-outline-secondary">Reset</a>
+      <% } %>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <% if (products.length === 0) { %>
+      <div class="text-center py-5 text-muted">
+        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+        <% if (search) { %>
+          Tidak ada produk dengan kata kunci "<strong><%= search %></strong>"
+        <% } else { %>
+          Belum ada produk. <a href="/products/create">Tambah sekarang</a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nama Produk</th>
+            <th>Kategori</th>
+            <th class="text-end">Harga</th>
+            <th class="text-center">Stok</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach((p, i) => { %>
+            <% const status = p.getStockStatus(); %>
+            <tr>
+              <td class="text-muted small"><%= ((pagination.currentPage - 1) * 10) + i + 1 %></td>
+              <td>
+                <a href="/products/<%= p.id %>" class="fw-semibold text-decoration-none"><%= p.name %></a>
+                <% if (p.description) { %>
+                  <div class="small text-muted text-truncate" style="max-width:200px"><%= p.description %></div>
+                <% } %>
+              </td>
+              <td><% if (p.category) { %><span class="badge bg-light text-dark border"><%= p.category %></span><% } else { %><span class="text-muted">-</span><% } %></td>
+              <td class="text-end fw-semibold"><%= new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(p.price) %></td>
+              <td class="text-center"><%= p.stock %></td>
+              <td class="text-center"><span class="badge badge-<%= status.class %>"><%= status.label %></span></td>
+              <td class="text-center">
+                <div class="d-flex gap-1 justify-content-center">
+                  <a href="/products/<%= p.id %>/edit" class="btn btn-xs btn-outline-primary btn-sm py-0 px-2"><i class="bi bi-pencil"></i></a>
+                  <form action="/products/<%= p.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Hapus produk <%= p.name %>?')">
+                    <button type="submit" class="btn btn-xs btn-outline-danger btn-sm py-0 px-2"><i class="bi bi-trash"></i></button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+        <tfoot>
+          <tr class="table-light">
+            <td colspan="3" class="fw-semibold ps-3">Total Nilai Inventory:</td>
+            <td class="text-end fw-bold text-success">
+              <%= new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(totalValue) %>
+            </td>
+            <td colspan="3"></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Pagination -->
+      <% if (pagination.totalPages > 1) { %>
+        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
+          <small class="text-muted">Halaman <%= pagination.currentPage %> dari <%= pagination.totalPages %></small>
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item <%= !pagination.hasPrev ? 'disabled' : '' %>">
+                <a class="page-link" href="?page=<%= pagination.currentPage - 1 %>&search=<%= search %>">‹</a>
+              </li>
+              <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                <li class="page-item <%= i === pagination.currentPage ? 'active' : '' %>">
+                  <a class="page-link" href="?page=<%= i %>&search=<%= search %>"><%= i %></a>
+                </li>
+              <% } %>
+              <li class="page-item <%= !pagination.hasNext ? 'disabled' : '' %>">
+                <a class="page-link" href="?page=<%= pagination.currentPage + 1 %>&search=<%= search %>">›</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      <% } %>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

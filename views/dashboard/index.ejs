@@ -1,0 +1,23 @@
+<%
+  currentPage = 'dashboard';
+  const sessionData = locals.session || {};
+%>
+<%- include('../partials/header') %>
+
+<% if (success && success.length > 0) { %>
+  <div class="alert alert-success alert-dismissible fade show"><%= success %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+<% } %>
+<% if (error && error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show"><%= error %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+<% } %>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+</div>
+
+<!-- Quick Access -->
+<div class="row g-3 mb-4">
+  
+</div>
+
+<%- include('../partials/footer') %>

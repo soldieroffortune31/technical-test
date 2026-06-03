@@ -1,0 +1,75 @@
+<%
+  currentPage = 'char-match';
+%>
+<%- include('../partials/header') %>
+
+<div class="row justify-content-center">
+  <div class="col-md-8">
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <% if (error) { %>
+          <div class="alert alert-danger py-2"><%= error %></div>
+        <% } %>
+
+        <form action="/math/char-match" method="POST">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Input 1</label>
+              <input type="text" name="input1" class="form-control" value="<%= input1 %>" placeholder="Contoh: ABBCD" required />
+              <div class="form-text">Karakter dari string ini akan dicari di Input 2</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Input 2</label>
+              <input type="text" name="input2" class="form-control" value="<%= input2 %>" placeholder="Contoh: Gallant Duck" required />
+              <div class="form-text">String yang akan dicari karakternya</div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold d-block">Tipe Pengecekan</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="sensitiveCase" id="sensitive" value="sensitive"
+                <%= sensitiveCase === 'sensitive' ? 'checked' : '' %> />
+              <label class="form-check-label" for="sensitive">
+                <strong>Sensitive Case</strong>
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="sensitiveCase" id="nonSensitive" value="non-sensitive"
+                <%= sensitiveCase === 'non-sensitive' ? 'checked' : '' %> />
+              <label class="form-check-label" for="nonSensitive">
+                <strong>Non Sensitive Case</strong>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search me-1"></i>Hitung Persentase
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <% if (result !== null) { %>
+      <div class="card border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card-body text-white">
+          <h6 class="fw-bold mb-3"><i class="bi bi-graph-up me-1"></i>Hasil Analisis</h6>
+
+          <div class="row g-3 mb-4">
+            <div class="col-4">
+              <div class="text-center p-3 rounded justify-content-center" style="background:rgba(255,255,255,.15)">
+                <div class="fs-2 fw-bold"><%= result.percentage %>%</div>
+                <div class="small opacity-75">Persentase</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
